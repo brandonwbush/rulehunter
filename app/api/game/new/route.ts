@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
-import { getRandomRule } from '@/app/api/game/rule';
+import { getRandomRule, getDailyRule } from '@/app/api/game/rule';
 import { createSession } from '@/app/api/game/session';
 import { NewGameRequest, NewGameResponse } from './types';
 import { GameSession } from '@/app/api/game/session';
@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body: NewGameRequest = await request.json();
-    const { difficulty, username } = body;
+    const { difficulty, username, isDaily } = body;
 
     // Check if user is authenticated
     const authToken = getAuthTokenFromRequest(request);
 
-    // Get a random rule based on difficulty
-    const mysteryRule = getRandomRule(difficulty);
+    // Get a rule based on mode (daily or random)
+    const mysteryRule = isDaily ? getDailyRule(difficulty) : getRandomRule(difficulty);
 
     // Generate session ID
     const sessionId = randomBytes(16).toString('hex');

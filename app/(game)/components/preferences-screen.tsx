@@ -7,7 +7,7 @@ import { usePreferences } from '../context/preferences-context';
 
 interface PreferencesScreenProps {
   error: string;
-  onStartGame: (name: string, difficulty: 'easy' | 'medium' | 'hard') => void;
+  onStartGame: (name: string, difficulty: 'easy' | 'medium' | 'hard', isDaily?: boolean) => void;
 }
 
 export function PreferencesScreen({ error, onStartGame }: PreferencesScreenProps) {
@@ -15,6 +15,7 @@ export function PreferencesScreen({ error, onStartGame }: PreferencesScreenProps
   const [nameInput, setNameInput] = useState(preferences.playerName);
   const [difficulty, setDifficulty] = useState(preferences.difficulty);
   const [sessionInput, setSessionInput] = useState(preferences.lastSessionId);
+  const [isDaily, setIsDaily] = useState(false);
 
   const handleStartGame = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ export function PreferencesScreen({ error, onStartGame }: PreferencesScreenProps
     // Save preferences
     preferences.setPlayerName(name);
     preferences.setDifficulty(difficulty);
-    onStartGame(name, difficulty);
+    onStartGame(name, difficulty, isDaily);
   };
 
   return (
@@ -60,6 +61,19 @@ export function PreferencesScreen({ error, onStartGame }: PreferencesScreenProps
               className="w-full px-4 py-3 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring mb-4"
               autoFocus
             />
+
+            <div className="mb-4 flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="daily-mode"
+                checked={isDaily}
+                onChange={(e) => setIsDaily(e.target.checked)}
+                className="w-4 h-4 rounded border-input bg-background text-primary focus:ring-2 focus:ring-ring"
+              />
+              <label htmlFor="daily-mode" className="text-sm font-medium text-foreground cursor-pointer">
+                Daily Challenge (everyone plays the same rule today)
+              </label>
+            </div>
 
             <label className="block mb-2 text-sm font-medium text-foreground">
               Difficulty

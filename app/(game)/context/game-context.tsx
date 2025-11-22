@@ -49,7 +49,7 @@ interface GameContextType {
   hintUsed: boolean;
   hint: string;
 
-  startNewGame: (name: string, difficulty?: 'easy' | 'medium' | 'hard') => Promise<void>;
+  startNewGame: (name: string, difficulty?: 'easy' | 'medium' | 'hard', isDaily?: boolean) => Promise<void>;
   loadSession: (id: string) => Promise<void>;
   handleCheck: (array: number[]) => Promise<void>;
   handleSubmit: (code: string) => Promise<void>;
@@ -126,7 +126,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const startNewGame = async (name: string, difficulty?: 'easy' | 'medium' | 'hard') => {
+  const startNewGame = async (name: string, difficulty?: 'easy' | 'medium' | 'hard', isDaily?: boolean) => {
     try {
       setGamePhase('loading');
       setError('');
@@ -141,7 +141,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const response = await fetch('/api/game/new', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ username: name, difficulty })
+        body: JSON.stringify({ username: name, difficulty, isDaily })
       });
 
       if (!response.ok) {

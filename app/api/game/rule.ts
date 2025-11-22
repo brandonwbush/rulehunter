@@ -1756,3 +1756,23 @@ export function getRandomRule(difficulty?: Difficulty): MysteryRule {
 export function getRuleByName(name: string): MysteryRule | undefined {
   return ALL_RULES.find(rule => rule.name === name);
 }
+
+// Simple seeded random number generator
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed++) * 10000;
+  return x - Math.floor(x);
+}
+
+export function getDailyRule(difficulty?: Difficulty): MysteryRule {
+  // Get today's date as seed (YYYY-MM-DD format)
+  const today = new Date().toISOString().split('T')[0];
+  // Convert date string to number seed
+  const seed = today.split('-').map(Number).reduce((acc, val) => acc + val, 0);
+
+  const rules = difficulty
+    ? ALL_RULES.filter(rule => rule.difficulty === difficulty)
+    : ALL_RULES;
+
+  const index = Math.floor(seededRandom(seed) * rules.length);
+  return rules[index];
+}
