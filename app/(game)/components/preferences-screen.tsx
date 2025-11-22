@@ -27,14 +27,16 @@ export function PreferencesScreen({ error, onStartGame }: PreferencesScreenProps
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <ThemeToggle />
       <div className="max-w-md w-full">
         <div className="bg-card rounded-lg p-8 border border-border shadow-lg">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Image src="/icon.svg" alt="Rule Hunter" width={40} height={40} />
-            <h1 className="text-3xl font-bold font-serif text-foreground">
-              Rule Hunter
-            </h1>
+          <div className="flex items-center mb-2">
+            <div className="flex items-center justify-center gap-3 flex-1">
+              <Image src="/icon.svg" alt="Rule Hunter" width={40} height={40} />
+              <h1 className="text-3xl font-bold font-serif text-foreground">
+                Rule Hunter
+              </h1>
+            </div>
+            <ThemeToggle />
           </div>
           <p className="text-muted-foreground text-center mb-6 font-mono text-sm">
             Discover the mystery rule

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/core/game/session-store';
+import { getSession } from '@/app/api/game/session';
 
 export async function GET(
   request: NextRequest,

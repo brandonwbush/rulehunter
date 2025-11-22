@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, updateSession } from '@/core/game/session-store';
-import { CheckRequest, CheckResponse } from '@/lib/types';
+import { getSession, updateSession } from '@/app/api/game/session';
+import { CheckRequest, CheckResponse } from './types';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {

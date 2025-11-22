@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, updateSession } from '@/core/game/session-store';
-import { executeSandboxed } from '@/core/game/sandbox';
-import { generateTestCases } from '@/core/game/fuzzer';
-import { SubmitRequest, SubmitResponse } from '@/lib/types';
+import { getSession, updateSession } from '@/app/api/game/session';
+import { executeSandboxed } from '@/app/api/game/sandbox';
+import { generateTestCases } from '@/app/api/game/fuzzer';
+import { SubmitRequest, SubmitResponse } from './types';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
@@ -75,7 +75,8 @@ export async function POST(request: NextRequest) {
 
         await updateSession(sessionId, {
           phase: 'failed',
-          submissions: session.submissions + 1
+          submissions: session.submissions + 1,
+          completedAt: Date.now()
         });
 
         return NextResponse.json(response);
@@ -104,7 +105,8 @@ export async function POST(request: NextRequest) {
 
       await updateSession(sessionId, {
         phase: 'failed',
-        submissions: session.submissions + 1
+        submissions: session.submissions + 1,
+        completedAt: Date.now()
       });
 
       return NextResponse.json(response);
@@ -113,7 +115,8 @@ export async function POST(request: NextRequest) {
     // Success! No failures found
     const updatedSession = await updateSession(sessionId, {
       phase: 'won',
-      submissions: session.submissions + 1
+      submissions: session.submissions + 1,
+      completedAt: Date.now()
     });
 
     if (!updatedSession) {

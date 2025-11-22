@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeSandboxed } from '@/core/game/sandbox';
+import { executeSandboxed } from '@/app/api/game/sandbox';
 
 describe('executeSandboxed', () => {
   describe('basic functionality', () => {

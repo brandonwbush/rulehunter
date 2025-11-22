@@ -1,4 +1,4 @@
-import { GameSession } from '@/lib/types';
+import { GameSession } from './session';
 
 const CHECK_PENALTY = 0.05;
 const SUBMISSION_PENALTY = 0.2;

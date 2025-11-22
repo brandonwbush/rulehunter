@@ -6,10 +6,12 @@ An adversarial programming challenge where players discover a hidden rule by que
 
 - **60 Mystery Rules** across 3 difficulty levels (20 Easy, 20 Medium, 20 Hard)
 - **Query System** - Test up to 20 arrays to discover patterns
+- **Hint System** - Request a hint about the rule (with score penalty)
 - **Code Sandbox** - Safe execution of player-submitted JavaScript functions
 - **Adversarial Fuzzing** - 1000+ test cases to find failures
 - **Scoring System** - Points for efficiency and accuracy
-- **Beautiful UI** - Warm, paper-like theme with IBM Plex fonts
+- **User Authentication** - Register and track game history
+- **UI** - Warm, paper-like theme with IBM Plex fonts
 
 ## Tech Stack
 
@@ -17,7 +19,7 @@ An adversarial programming challenge where players discover a hidden rule by que
 - **React 19**
 - **TypeScript**
 - **Tailwind CSS v4**
-- **Vercel Blob Storage** (Session persistence)
+- **Vercel Blob Storage** (Session and user data persistence)
 
 ## Getting Started
 
@@ -27,15 +29,15 @@ An adversarial programming challenge where players discover a hidden rule by que
 # Install dependencies
 npm install
 
-# Optional: Set up Vercel Blob Storage for session persistence
+# Optional: Set up Vercel Blob Storage for persistence
 # Copy .env.example to .env.local and add your BLOB_READ_WRITE_TOKEN
-# If you don't configure this, sessions will be stored in .sessions/ folder
+# If you don't configure this, data will be stored in local folders (.sessions/, .users/)
 
 # Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to play!
+Open [http://localhost:3000](http://localhost:3000) to play.
 
 ### Production Deployment on Vercel
 
@@ -59,7 +61,7 @@ Open [http://localhost:3000](http://localhost:3000) to play!
    - Connect the Blob store you created
    - Vercel will automatically inject the `BLOB_READ_WRITE_TOKEN` environment variable
 
-4. **That's it!** Your app is now production-ready with persistent session storage.
+4. Your app is now production-ready with persistent storage.
 
 ### Manual Build and Start
 
@@ -75,9 +77,10 @@ npm start
 
 1. **Discovery Phase**: You're given one example array that passes the mystery rule
 2. **Query**: Test up to 20 arrays to discover the pattern
-3. **Submit**: Write a JavaScript function that implements the rule
-4. **Testing**: Your code is tested against 1000+ adversarial test cases
-5. **Win**: If no failures are found, you win!
+3. **Hint** (optional): Request a hint about the rule
+4. **Submit**: Write a JavaScript function that implements the rule
+5. **Testing**: Your code is tested against 1000+ adversarial test cases
+6. **Win**: If no failures are found, you win
 
 ## Mystery Rules
 
@@ -106,6 +109,7 @@ The game includes 60 different rules across three difficulty levels:
 ```
 Base Score: 1.00
 - Queries: -0.05 per query (first query is free)
+- Hints: -0.10 (one hint available per game)
 - Submissions: -0.20 per failed submission (first submission is free)
 Minimum: 0.00
 ```
@@ -114,18 +118,23 @@ Minimum: 0.00
 
 ```
 app/
-  api/game/          # API routes for game logic
+  api/
+    auth/            # Authentication endpoints (login, register, token)
+    user/            # User data endpoints (history)
+    game/            # Game logic and endpoints
+      rule.ts        # Rule definitions
+      fuzzer.ts      # Test case generation
+      sandbox.ts     # Safe code execution
+      scoring.ts     # Score calculation
+      session.ts     # Session management
+      check/         # Query validation endpoint
+      hint/          # Hint request endpoint
+      new/           # New game creation endpoint
+      submit/        # Code submission endpoint
   (game)/            # Main game UI
     components/      # React components
-core/game/           # Core game logic
-  mystery-rule.ts    # Rule definitions
-  rule-bank.ts       # Rule selection
-  fuzzer.ts          # Test case generation
-  sandbox.ts         # Safe code execution
-  scoring.ts         # Score calculation
-  session-store.ts   # Session management
+    context/         # React context providers
 lib/
-  types.ts           # TypeScript types
   utils.ts           # Utility functions
 ```
 
@@ -134,7 +143,6 @@ lib/
 - Leaderboard
 - Daily challenge mode
 - Multiplayer mode
-- Hint system
 - More rules
 - Rule difficulty rating
 

@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, updateSession } from '@/core/game/session-store';
-import type { ApiError } from '@/lib/types';
+import { getSession, updateSession } from '@/app/api/game/session';
+import type { ApiError, HintResponse } from './types';
 
 interface HintRequest {
   sessionId: string;
-}
-
-interface HintResponse {
-  hint: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -52,7 +48,8 @@ export async function POST(request: NextRequest) {
     });
 
     const response: HintResponse = {
-      hint: session.mysteryRule.hint
+      hint: session.mysteryRule.hint,
+      hintUsed: true
     };
 
     return NextResponse.json(response);

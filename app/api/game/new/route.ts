@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
-import { getRandomRule } from '@/core/game/rule-bank';
-import { createSession } from '@/core/game/session-store';
-import { NewGameRequest, NewGameResponse, GameSession } from '@/lib/types';
+import { getRandomRule } from '@/app/api/game/rule';
+import { createSession } from '@/app/api/game/session';
+import { NewGameRequest, NewGameResponse } from './types';
+import { GameSession } from '@/app/api/game/session';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
+import { getAuthTokenFromRequest } from '@/app/api/auth/token';
 
 export async function POST(request: NextRequest) {
-  // Rate limiting: 10 new games per hour per IP (skip in test environment)
+  // Rate limiting: 50 new games per 15 minutes per IP (skip in test environment)
   if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const rateLimit = checkRateLimit(`new-game:${ip}`, {
-      windowMs: 60 * 60 * 1000, // 1 hour
-      maxRequests: 10,
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      maxRequests: 50,
     });
 
     if (!rateLimit.allowed) {
@@ -27,7 +29,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const body: NewGameRequest = await request.json();
-    const { difficulty, playerName } = body;
+    const { difficulty, username } = body;
+
+    // Check if user is authenticated
+    const authToken = getAuthTokenFromRequest(request);
 
     // Get a random rule based on difficulty
     const mysteryRule = getRandomRule(difficulty);
@@ -46,7 +51,8 @@ export async function POST(request: NextRequest) {
     // Create game session
     const session: GameSession = {
       id: sessionId,
-      playerName: playerName || 'Anonymous',
+      username: username || authToken?.username || 'Anonymous',
+      userId: authToken?.userId,
       difficulty: mysteryRule.difficulty,
       mysteryRuleName: mysteryRule.name,
       phase: 'playing',

@@ -1,7 +1,51 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { GameSession } from '@/lib/types';
-import { getRuleByName } from './rule-bank';
+import { MysteryRule, Difficulty, getRuleByName } from './rule';
+
+// Types
+export type GamePhase = 'preferences' | 'loading' | 'playing' | 'testing' | 'won' | 'failed' | 'lost'
+
+export interface CheckResult {
+  array: number[]
+  result: boolean
+  timestamp: number
+}
+
+export interface FailedCase {
+  array: number[]
+  expectedResult: boolean
+  playerResult: boolean
+}
+
+export interface GameSession {
+  id: string
+  username: string
+  userId?: string
+  difficulty: Difficulty
+  mysteryRuleName: string
+  phase: GamePhase
+  checksUsed: number
+  maxChecks: number
+  freeChecks: number
+  submissions: number
+  startTime: number
+  score: number
+  exampleArrays: number[][]
+  checkHistory: CheckResult[]
+  mysteryRule: MysteryRule
+  hintUsed: boolean
+  completedAt?: number
+}
+
+export interface GameSessionSummary {
+  id: string
+  difficulty: Difficulty
+  mysteryRuleName: string
+  phase: GamePhase
+  score: number
+  startTime: number
+  completedAt?: number
+}
 
 interface StoredSession extends Omit<GameSession, 'mysteryRule'> {
   mysteryRuleName: string;

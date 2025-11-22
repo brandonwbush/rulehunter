@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CheckResult, SubmitResponse, GamePhase, GameSession } from '@/lib/types';
+import { CheckResult, GamePhase, GameSession } from '@/app/api/game/session';
+import { SubmitResponse } from '@/app/api/game/submit/types';
 import { usePreferences } from './preferences-context';
 
 function calculateLiveScore(checksUsed: number, freeChecks: number, submissions: number, hintUsed: boolean): number {
@@ -55,6 +56,7 @@ interface GameContextType {
   handleRetry: () => void;
   handleRestart: () => void;
   handleHint: () => Promise<void>;
+  updatePlayerName: (name: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -129,10 +131,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setError('');
       setSubmitError('');
 
+      const authToken = localStorage.getItem('authToken');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+
       const response = await fetch('/api/game/new', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playerName: name, difficulty })
+        headers,
+        body: JSON.stringify({ username: name, difficulty })
       });
 
       if (!response.ok) {
@@ -271,6 +279,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setGamePhase('preferences');
   };
 
+  const updatePlayerName = (name: string) => {
+    setPlayerName(name);
+  };
+
   const handleHint = async () => {
     try {
       setError('');
@@ -333,7 +345,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       handleSubmit,
       handleRetry,
       handleRestart,
-      handleHint
+      handleHint,
+      updatePlayerName
     }}>
       {children}
     </GameContext.Provider>

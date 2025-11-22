@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getRandomRule, getRuleByName } from '@/core/game/rule-bank';
-import { ALL_RULES } from '@/core/game/mystery-rule';
+import { getRandomRule, getRuleByName } from '@/app/api/game/rule';
+import { ALL_RULES } from '@/app/api/game/rule';
 
 describe('Rule Bank', () => {
   describe('getRandomRule', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createSession, getSession, updateSession } from '@/core/game/session-store';
-import { GameSession } from '@/lib/types';
+import { createSession, getSession, updateSession } from '@/app/api/game/session';
+import { GameSession } from '@/app/api/game/session';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 

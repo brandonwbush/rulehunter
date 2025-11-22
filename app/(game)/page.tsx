@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useGame } from './context/game-context';
+import { usePreferences } from './context/preferences-context';
 import {
   GameStats,
   DiscoveryPanel,
@@ -14,13 +15,38 @@ import {
   WinScreen,
   LossScreen,
 } from './components';
+import { AuthScreen } from './components/auth-screen';
 import { SkeletonLoader } from './components/skeleton-loader';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function GamePage() {
   const game = useGame();
+  const preferences = usePreferences();
   const [showDirectionsModal, setShowDirectionsModal] = useState(false);
   const [showFailurePanel, setShowFailurePanel] = useState(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [showAuth, setShowAuth] = useState(true);
+
+  // Check for existing auth on mount
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setAuthToken(token);
+      setShowAuth(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
+    setAuthToken(null);
+    setShowAuth(true);
+    game.handleRestart();
+  };
+
+  const handleShowLogin = () => {
+    setShowAuth(true);
+  };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -47,33 +73,39 @@ export default function GamePage() {
     }
   }, [game.gamePhase, game.submitResult]);
 
+  // Auth Screen
+  if (showAuth && (game.gamePhase === 'preferences' || game.gamePhase === 'playing')) {
+    return (
+      <AuthScreen
+        onSkip={() => setShowAuth(false)}
+        onLogin={(token, username) => {
+          setAuthToken(token);
+          preferences.setPlayerName(username); // Persist to localStorage
+          game.updatePlayerName(username); // Update current session display
+          setShowAuth(false);
+        }}
+      />
+    );
+  }
+
   // Preferences Screen
   if (game.gamePhase === 'preferences') {
     return (
-      <>
-        <ThemeToggle />
-        <PreferencesScreen
-          error={game.error}
-          onStartGame={game.startNewGame}
-        />
-      </>
+      <PreferencesScreen
+        error={game.error}
+        onStartGame={game.startNewGame}
+      />
     );
   }
 
   // Loading Screen
   if (game.gamePhase === 'loading') {
-    return (
-      <>
-        <ThemeToggle />
-        <SkeletonLoader />
-      </>
-    );
+    return <SkeletonLoader />;
   }
 
   // Main Game Screen
   return (
     <div className="min-h-screen bg-background py-8 px-4">
-      <ThemeToggle />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <GameHeader
@@ -82,6 +114,9 @@ export default function GamePage() {
           difficulty={game.difficulty}
           onDirections={() => setShowDirectionsModal(true)}
           onRestart={game.handleRestart}
+          onLogout={authToken ? handleLogout : undefined}
+          onLogin={!authToken ? handleShowLogin : undefined}
+          isGuest={!authToken}
         />
 
         {/* Error Display */}

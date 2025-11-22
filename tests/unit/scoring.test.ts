@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculateScore } from '@/core/game/scoring';
-import { GameSession } from '@/lib/types';
+import { calculateScore } from '@/app/api/game/scoring';
+import { GameSession } from '@/app/api/game/session';
 
 function createMockSession(overrides: Partial<GameSession> = {}): GameSession {
   return {

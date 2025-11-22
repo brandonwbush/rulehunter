@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  serverExternalPackages: ['isolated-vm', 'esbuild'],
+  serverExternalPackages: ['isolated-vm', 'esbuild', 'bcrypt'],
   async headers() {
     return [
       {

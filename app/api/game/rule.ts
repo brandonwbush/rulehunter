@@ -1,4 +1,14 @@
-import { MysteryRule } from '@/lib/types';
+// Types
+export type Difficulty = 'easy' | 'medium' | 'hard'
+
+export interface MysteryRule {
+  name: string
+  difficulty: Difficulty
+  description: string
+  fn: (arr: number[]) => boolean
+  exampleArrays: number[][]
+  hint: string
+}
 
 // Helper functions
 function isPrime(n: number): boolean {
@@ -720,3 +730,15 @@ export const ALL_RULES: MysteryRule[] = [
   ...mediumRules,
   ...hardRules
 ];
+
+export function getRandomRule(difficulty?: Difficulty): MysteryRule {
+  const rules = difficulty
+    ? ALL_RULES.filter(rule => rule.difficulty === difficulty)
+    : ALL_RULES;
+  const randomIndex = Math.floor(Math.random() * rules.length);
+  return rules[randomIndex];
+}
+
+export function getRuleByName(name: string): MysteryRule | undefined {
+  return ALL_RULES.find(rule => rule.name === name);
+}

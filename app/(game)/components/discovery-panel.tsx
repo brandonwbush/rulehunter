@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Check, X } from 'lucide-react';
-import { CheckResult } from '@/lib/types';
+import { CheckResult } from '@/app/api/game/session';
 
 interface DiscoveryPanelProps {
   checkHistory: CheckResult[];

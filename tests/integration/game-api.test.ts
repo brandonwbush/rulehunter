@@ -151,10 +151,10 @@ describe('Game API Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(data).toHaveProperty('hint');
-      expect(data).toHaveProperty('score');
+      expect(data).toHaveProperty('hintUsed');
       expect(typeof data.hint).toBe('string');
       expect(data.hint.length).toBeGreaterThan(0);
-      expect(data.score).toBe(0.9); // 1.0 - 0.1 for hint
+      expect(data.hintUsed).toBe(true);
     });
 
     it('should reject hint without sessionId', async () => {
@@ -190,23 +190,14 @@ describe('Game API Endpoints', () => {
       expect(data2.error).toContain('already used');
     });
 
-    it('should deduct hint score from total', async () => {
-      // Use some checks first to have a score < 1.0
-      const checkRequest1 = createRequest({ sessionId, array: [1, 2, 3] });
-      await checkPost(checkRequest1);
-      const checkRequest2 = createRequest({ sessionId, array: [1, 2, 3] });
-      await checkPost(checkRequest2);
-      const checkRequest3 = createRequest({ sessionId, array: [1, 2, 3] });
-      await checkPost(checkRequest3); // 3 checks, 1 extra check beyond 2 free = -0.05
-
-      // Now request hint
+    it('should mark hint as used', async () => {
+      // Request hint
       const hintRequest = createRequest({ sessionId });
       const response = await hintPost(hintRequest);
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      // Score should be 1.0 - 0.05 (1 extra check) - 0.1 (hint) = 0.85
-      expect(data.score).toBeCloseTo(0.85, 10);
+      expect(data.hintUsed).toBe(true);
     });
   });
 
