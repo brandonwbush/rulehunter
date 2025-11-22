@@ -2,13 +2,17 @@
 
 import { useTheme } from './theme-provider';
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+export function ThemeToggle({ className }: ThemeToggleProps = {}) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded bg-card border border-border shadow-sm hover:shadow-md transition-all hover:scale-105"
+      className={className || "p-2 rounded bg-card border border-border shadow-sm hover:shadow-md transition-all hover:scale-105"}
       aria-label="Toggle theme"
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >

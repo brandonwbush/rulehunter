@@ -14,10 +14,10 @@ export function LossScreen({ ruleDescription, onTryAgain }: LossScreenProps) {
           <Skull className="w-12 h-12 text-destructive" />
         </div>
         <h3 className="text-lg font-bold font-serif text-foreground mb-2">
-          Game Over - Score Depleted
+          Game Over
         </h3>
         <p className="text-muted-foreground mb-4">
-          Your score has reached 0.00. You&apos;ve used too many queries or submissions.
+          You lost.
         </p>
         <details className="mb-4">
           <summary className="cursor-pointer text-primary hover:underline font-medium">

@@ -114,6 +114,7 @@ export default function GamePage() {
           difficulty={game.difficulty}
           onDirections={() => setShowDirectionsModal(true)}
           onRestart={game.handleRestart}
+          onQuit={game.gamePhase === 'playing' || game.gamePhase === 'testing' || game.gamePhase === 'failed' ? game.handleQuit : undefined}
           onLogout={authToken ? handleLogout : undefined}
           onLogin={!authToken ? handleShowLogin : undefined}
           isGuest={!authToken}

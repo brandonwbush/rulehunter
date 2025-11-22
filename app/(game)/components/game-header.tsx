@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { MoreVertical } from 'lucide-react';
+import { BookOpen, Play, XCircle, LogOut, LogIn, Settings } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 interface GameHeaderProps {
@@ -11,26 +11,14 @@ interface GameHeaderProps {
   difficulty: string;
   onDirections: () => void;
   onRestart: () => void;
+  onQuit?: () => void;
   onLogout?: () => void;
   onLogin?: () => void;
   isGuest?: boolean;
 }
 
-export function GameHeader({ playerName, sessionId, difficulty, onDirections, onRestart, onLogout, onLogin, isGuest }: GameHeaderProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    if (menuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [menuOpen]);
+export function GameHeader({ playerName, sessionId, difficulty, onDirections, onRestart, onQuit, onLogout, onLogin, isGuest }: GameHeaderProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="mb-8">
@@ -51,60 +39,65 @@ export function GameHeader({ playerName, sessionId, difficulty, onDirections, on
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          <ThemeToggle />
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 bg-card border border-border shadow-sm hover:shadow-md transition-all rounded"
-              aria-label="Options"
-            >
-              <MoreVertical className="w-5 h-5" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded shadow-lg z-10">
+          <div className="flex gap-2 items-center overflow-hidden">
+            <div className={`flex gap-2 items-center transition-all duration-300 ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
+              <button
+                onClick={onDirections}
+                className="p-2 bg-secondary dark:bg-primary/5 border border-primary dark:border-primary/20 shadow-sm hover:shadow-md transition-all rounded"
+                aria-label="Directions"
+                title="Directions"
+              >
+                <BookOpen className="w-5 h-5" />
+              </button>
+              <button
+                onClick={onRestart}
+                className="p-2 bg-secondary dark:bg-primary/5 border border-primary dark:border-primary/20 shadow-sm hover:shadow-md transition-all rounded"
+                aria-label="New Game"
+                title="New Game"
+              >
+                <Play className="w-5 h-5" />
+              </button>
+              {onQuit && (
                 <button
-                  onClick={() => {
-                    onDirections();
-                    setMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-3 hover:bg-muted transition-colors text-foreground"
+                  onClick={onQuit}
+                  className="p-2 bg-secondary dark:bg-primary/5 border border-primary dark:border-primary/20 shadow-sm hover:shadow-md transition-all rounded"
+                  aria-label="Quit Game"
+                  title="Quit Game"
                 >
-                  Directions
+                  <XCircle className="w-5 h-5" />
                 </button>
+              )}
+              <ThemeToggle className="p-2 bg-accent dark:bg-accent/30 border border-accent dark:border-accent/40 shadow-sm hover:shadow-md transition-all rounded text-accent-foreground" />
+              {isGuest && onLogin && (
                 <button
-                  onClick={() => {
-                    onRestart();
-                    setMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-3 hover:bg-muted transition-colors text-foreground font-medium"
+                  onClick={onLogin}
+                  className="p-2 bg-accent dark:bg-accent/30 border border-accent dark:border-accent/40 shadow-sm hover:shadow-md transition-all rounded text-accent-foreground"
+                  aria-label="Login"
+                  title="Login"
                 >
-                  New Game
+                  <LogIn className="w-5 h-5" />
                 </button>
-                {isGuest && onLogin && (
-                  <button
-                    onClick={() => {
-                      onLogin();
-                      setMenuOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-3 hover:bg-muted transition-colors text-foreground border-t border-border"
-                  >
-                    Login
-                  </button>
-                )}
-                {onLogout && (
-                  <button
-                    onClick={() => {
-                      onLogout();
-                      setMenuOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-3 hover:bg-muted transition-colors text-foreground border-t border-border"
-                  >
-                    Logout
-                  </button>
-                )}
-              </div>
-            )}
+              )}
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="p-2 bg-accent dark:bg-accent/30 border border-accent dark:border-accent/40 shadow-sm hover:shadow-md transition-all rounded text-accent-foreground"
+                  aria-label="Logout"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           </div>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-2 bg-card border border-border shadow-sm hover:shadow-md transition-all rounded"
+            aria-label="Menu"
+            title="Menu"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>

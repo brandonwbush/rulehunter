@@ -56,6 +56,7 @@ interface GameContextType {
   handleRetry: () => void;
   handleRestart: () => void;
   handleHint: () => Promise<void>;
+  handleQuit: () => Promise<void>;
   updatePlayerName: (name: string) => void;
 }
 
@@ -95,7 +96,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const session = await response.json();
 
       setSessionId(session.id);
-      setPlayerName(session.playerName || 'Player');
+      setPlayerName(preferences.playerName || session.username || 'Player');
       setDifficulty(session.difficulty || 'medium');
       setExampleArrays(session.exampleArrays || []);
       setMaxChecks(session.maxChecks);
@@ -310,6 +311,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const handleQuit = async () => {
+    try {
+      setError('');
+
+      const response = await fetch('/api/game/quit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to quit game');
+      }
+
+      // Reveal the rule
+      const ruleResponse = await fetch(`/api/game/reveal/${sessionId}`);
+      if (ruleResponse.ok) {
+        const ruleData = await ruleResponse.json();
+        setRevealedRule(ruleData.description);
+      }
+
+      // Update state to reflect quit
+      setScore(0);
+      setGamePhase('lost');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to quit game');
+    }
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionParam = params.get('session');
@@ -346,6 +377,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       handleRetry,
       handleRestart,
       handleHint,
+      handleQuit,
       updatePlayerName
     }}>
       {children}

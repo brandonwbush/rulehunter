@@ -4,7 +4,7 @@ interface ExampleArraysProps {
 
 export function ExampleArrays({ arrays }: ExampleArraysProps) {
   return (
-    <div className="bg-accent/30 border border-accent rounded-lg p-4 mb-6">
+    <div className="bg-accent dark:bg-accent/30 border border-accent rounded-lg p-4 mb-6">
       <div className="text-sm text-accent-foreground font-mono mb-2">
         Example {arrays.length > 1 ? 'arrays' : 'array'} that {arrays.length > 1 ? 'pass' : 'passes'}:
       </div>
