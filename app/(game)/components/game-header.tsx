@@ -96,7 +96,7 @@ export function GameHeader({ playerName, sessionId, difficulty, onDirections, on
             aria-label="Menu"
             title="Menu"
           >
-            <Settings className="w-5 h-5" />
+            <Settings className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />
           </button>
         </div>
       </div>
