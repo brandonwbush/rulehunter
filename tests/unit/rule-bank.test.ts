@@ -91,23 +91,23 @@ describe('Rule Bank', () => {
   });
 
   describe('ALL_RULES validation', () => {
-    it('should have exactly 60 rules', () => {
-      expect(ALL_RULES.length).toBe(60);
+    it('should have exactly 150 rules', () => {
+      expect(ALL_RULES.length).toBe(150);
     });
 
-    it('should have 20 easy rules', () => {
+    it('should have 50 easy rules', () => {
       const easyRules = ALL_RULES.filter(r => r.difficulty === 'easy');
-      expect(easyRules.length).toBe(20);
+      expect(easyRules.length).toBe(50);
     });
 
-    it('should have 20 medium rules', () => {
+    it('should have 50 medium rules', () => {
       const mediumRules = ALL_RULES.filter(r => r.difficulty === 'medium');
-      expect(mediumRules.length).toBe(20);
+      expect(mediumRules.length).toBe(50);
     });
 
-    it('should have 20 hard rules', () => {
+    it('should have 50 hard rules', () => {
       const hardRules = ALL_RULES.filter(r => r.difficulty === 'hard');
-      expect(hardRules.length).toBe(20);
+      expect(hardRules.length).toBe(50);
     });
 
     it('should have all rules with valid structure', () => {
